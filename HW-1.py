@@ -11,9 +11,19 @@ class Name(Field):
     pass
 
 class Phone(Field):
-    pass
+    def __init__(self, value):
+        if not isinstance(value, str):
+            raise ValueError("Phone number must be a string.")
+        self.value = value
 
 class Record:
+    def remove_phone(self, phone):
+        for p in self.phones:
+            if p.value == phone:
+                self.phones.remove(p)
+            return
+        raise ValueError("Phone number not found.")
+
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
@@ -22,9 +32,15 @@ class Record:
         self.phones.append(Phone(phone))
 
     def edit_phone(self, old_phone, new_phone):
-        for phone in self.phones:
-            if phone.value == old_phone:
-                phone.value = new_phone
+        old_phone_obj = self.find_phone(old_phone)
+        if old_phone_obj is None:
+            raise ValueError("Old phone number not found.")
+        try:
+            new_phone_obj = Phone(new_phone)
+        except ValueError as e:
+            raise ValueError(f"Invalid new phone number: {e}")
+        self.remove_phone(old_phone)
+        self.phones.append(new_phone_obj)
 
     def find_phone(self, phone_number):
         for phone in self.phones:
