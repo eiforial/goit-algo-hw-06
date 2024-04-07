@@ -12,8 +12,8 @@ class Name(Field):
 
 class Phone(Field):
     def __init__(self, value):
-        if not isinstance(value, str):
-            raise ValueError("Phone number must be a string.")
+        if not isinstance(value, str) or not value.isdigit() or len(value) != 10:
+            raise ValueError("Phone number must be a string containing exactly 10 digits.")
         self.value = value
 
 class Record:
@@ -45,7 +45,7 @@ class Record:
     def find_phone(self, phone_number):
         for phone in self.phones:
             if phone.value == phone_number:
-                return phone.value
+                return phone
         return None
 
     def __str__(self):
